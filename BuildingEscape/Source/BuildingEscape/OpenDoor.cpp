@@ -34,7 +34,8 @@ float UOpenDoor::GetTotalMassOfActor() {
 
 	float totalMass = 0.0f;
 	TArray<AActor*>  overlappingActors;
-
+	//Gets an array of actors who are colliding with the pressure plate
+	//this can be done so maybe in other rooms you would need to add 2 or more items to open a door
 	PressurePlate->GetOverlappingActors(overlappingActors);
 
 	for (AActor* actor : overlappingActors) {
@@ -57,11 +58,14 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		//create a rotator 
 
 		//owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+
+		//callback to the blueprint  that handles the opening door routine
 		openDoorPls.Broadcast();
 
 	}
 	else {
 		
+		//callback to the blueprint that handles closing the door
 		closeDoorPls.Broadcast();
 	}
 

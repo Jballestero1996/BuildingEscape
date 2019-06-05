@@ -12,7 +12,7 @@ class BUILDINGESCAPE_API Ugrabber : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	Ugrabber();
 
@@ -20,12 +20,12 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-private: 
-
+private:
+    //Value of how long you can reach for an item
 	float reach = 150.0f;
 
 	UInputComponent* playerInput = nullptr;
@@ -40,5 +40,5 @@ private:
 	FVector GetReachLineEnd();
 
 	FVector GetReachLineStart();
-	
+
 };

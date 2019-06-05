@@ -8,6 +8,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "Components/InputComponent.h"
 
+//OUT macro to put on return parameters from void functions
 #define OUT
 
 // Sets default values for this component's properties
@@ -50,12 +51,14 @@ void Ugrabber::BeginPlay()
 }
 
 void Ugrabber::Grab() {
-
+	
 	auto hitresult = getFirstPhysicsBody();
 	auto compToGrab = hitresult.GetComponent();
 	auto actorHit = hitresult.GetActor();
 
+	//If there is a "hit" then we will carry that object
 	if (actorHit != nullptr) {
+		
 		physicsHandle->GrabComponent(compToGrab,
 		NAME_None, compToGrab->GetOwner()->GetActorLocation(),
 		true);
@@ -90,6 +93,8 @@ const FHitResult Ugrabber::getFirstPhysicsBody()
 
 
 	FHitResult hit;
+
+	//raytrace in order to obtain all the information required about the actor on range
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
 	GetWorld()->LineTraceSingleByObjectType(
 		OUT hit,
@@ -103,6 +108,7 @@ const FHitResult Ugrabber::getFirstPhysicsBody()
 	AActor* actorhit = hit.GetActor();
 	auto hitresult = hit.GetComponent();
 
+	//Confirming that we are in range. 	
 	if (actorhit) {
 
 		UE_LOG(LogTemp, Warning, TEXT("Line Trace Hit: %s"), *(actorhit->GetName()));
@@ -118,11 +124,12 @@ FVector Ugrabber::GetReachLineEnd() {
 
 	FVector playerViewPoint;
 	FRotator playerRotation;
-
+	//Getting the players viewpoint to calculatee the possible reach of objects
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT playerViewPoint, OUT playerRotation);
 
 	///*UE_LOG(LogTemp, Warning, TEXT("Location %s, Position %s"), *playerViewPoint.ToString(), *playerRotation.ToString());*/
 
+	//The end of the line calculate and multiplied by a reach factor
 	FVector lineTracedEnd = playerViewPoint + (playerRotation.Vector() * reach);
 	
 	return lineTracedEnd;
@@ -136,10 +143,7 @@ FVector Ugrabber::GetReachLineStart() {
 
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT playerViewPoint, OUT playerRotation);
 
-	///*UE_LOG(LogTemp, Warning, TEXT("Location %s, Position %s"), *playerViewPoint.ToString(), *playerRotation.ToString());*/
-
-	FVector lineTracedEnd = playerViewPoint + (playerRotation.Vector() * reach);
-
+	//The beginning of the line clearly is the player view point
 	return playerViewPoint;
 }
 
@@ -150,10 +154,12 @@ void Ugrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	//// ...
 
-	FVector lineTracedEnd = GetReachLineEnd();
 
-
+	//Moving the position of the selected object if you are grabbing it
 	if (physicsHandle->GrabbedComponent != nullptr) {
+
+		FVector lineTracedEnd = GetReachLineEnd();
+
 
 		physicsHandle->SetTargetLocation(lineTracedEnd);
 	}
